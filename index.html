@@ -1,1 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Telegram Bot Token</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* biar semua hitung padding pakai border-box */
+    *, *::before, *::after { box-sizing: border-box; }
 
+    :root{
+      --inset: 14px;     /* jarak kiri-kanan di dalam card */
+      --gap: 12px;       /* gap antar elemen form */
+      --card-w: 520px;   /* lebar maksimum card */
+    }
+
+    body{
+      margin:0;
+      font-family:'Poppins',sans-serif;
+      background:#0a0a0f;
+      color:#e0e0e0;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      flex-direction:column;
+      padding:16px;
+      padding-left:max(16px, env(safe-area-inset-left));
+      padding-right:max(16px, env(safe-area-inset-right));
+      overflow:hidden;
+      position:relative;
+    }
+
+    /* canvas partikel */
+    canvas#particles{
+      position:fixed; inset:0; width:100%; height:100%; z-index:0;
+    }
+
+    .card{
+      background:rgba(20,20,30,0.9);
+      border:2px solid cyan;
+      border-radius:16px;
+      padding:20px 0;                 /* padding vertikal saja, horizontal via .inset */
+      width:min(92vw, var(--card-w)); /* supaya gak nabrak layar kecil */
+      text-align:center;
+      box-shadow:0 0 20px rgba(0,255,255,0.5), 0 0 20px rgba(255,0,0,0.3);
+      z-index:1;
+      margin:10px auto;
+    }
+
+    /* area isi yang ditarik ke dalam (anti nabrak) */
+    .inset{ padding-left:var(--inset); padding-right:var(--inset); }
+
+    h2{
+      margin:0 0 16px;
+      color:cyan;
+      text-shadow:0 0 10px cyan, 0 0 5px red;
+    }
+    .form-group{
+      display:flex; flex-direction:column;
+      gap:var(--gap);
+      margin-bottom:10px;
+    }
+
+    input{
+      width:100%;
+      padding:12px;
+      border-radius:8px;
+      border:2px solid #ff0040;
+      background:#0f0f17;
+      color:#fff;
+      outline:none;
+    }
+    input:focus{ border-color:cyan; box-shadow:0 0 8px cyan; }
+
+    button{
+      padding:12px 20px;
+      background:linear-gradient(90deg, cyan, red);
+      border:none; border-radius:10px;
+      font-weight:bold; color:#000;
+      cursor:pointer; transition:transform .2s;
+      width:100%;
+    }
+    button:hover{ transform:scale(1.03); }
+
+    .divider{
+      height:3px;
+      background:linear-gradient(90deg, cyan, red);
+      margin:24px 0;
+      border-radius:3px;
+      box-shadow:0 0 12px cyan, 0 0 12px red;
+    }
+
+    .token-list{
+      margin-top:12px;
+      text-align:left;
+      word-break:break-all;
+    }
+    .token-item{
+      padding:10px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid cyan;
+      border-radius:6px;
+      margin-bottom:8px;
+      font-size:14px;
+    }
+
+    .error{ color:red; margin-top:10px; font-weight:bold; text-shadow:0 0 8px red; animation:glitch .3s infinite; }
+    .success{ color:cyan; margin-top:10px; font-weight:bold; text-shadow:0 0 8px cyan; }
+
+    @keyframes glitch{
+      0%{ text-shadow:2px 2px red,-2px -2px cyan; }
+      20%{ text-shadow:-2px 2px cyan,2px -2px red; }
+      40%{ text-shadow:2px -2px red,-2px 2px cyan; }
+      60%{ text-shadow:-2px -2px cyan,2px 2px red; }
+      80%{ text-shadow:2px 2px cyan,-2px -2px red; }
+      100%{ text-shadow:-2px 2px red,2px -2px cyan; }
+    }
+
+    @media (max-width:380px){
+      :root{ --inset: 16px; }
+      h2{ font-size:1.25rem; }
+      input,button{ min-height:46px; }
+    }
+    
+.glitch {
+  position: relative;
+  display: inline-block;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  animation: flicker 2s infinite;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+  clip: rect(0, 900px, 0, 0);
+}
+
+.glitch::before {
+  left: 2px;
+  text-shadow: -2px 0 red;
+  animation: glitchTop 2s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  left: -2px;
+  text-shadow: -2px 0 cyan;
+  animation: glitchBottom 2s infinite linear alternate-reverse;
+}
+
+@keyframes glitchTop {
+  0% { clip: rect(0, 9999px, 0, 0); }
+  20% { clip: rect(10px, 9999px, 50px, 0); }
+  40% { clip: rect(20px, 9999px, 80px, 0); }
+  60% { clip: rect(40px, 9999px, 60px, 0); }
+  80% { clip: rect(30px, 9999px, 90px, 0); }
+  100% { clip: rect(0, 9999px, 0, 0); }
+}
+
+@keyframes glitchBottom {
+  0% { clip: rect(0, 9999px, 0, 0); }
+  20% { clip: rect(60px, 9999px, 80px, 0); }
+  40% { clip: rect(30px, 9999px, 60px, 0); }
+  60% { clip: rect(10px, 9999px, 40px, 0); }
+  80% { clip: rect(20px, 9999px, 50px, 0); }
+  100% { clip: rect(0, 9999px, 0, 0); }
+}
+
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.4; }
+}
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <div class="card" id="loginCard">
+    <div class="inset">
+      <h2 class="glitch" data-text="Login To X-CYBER CRASHER">LOGIN TO X-CYBER CRASHER</h2>
+      <div class="form-group">
+        <input type="password" id="password" placeholder="Enter Password" />
+        <button onclick="login()">Login</button>
+      </div>
+      <div id="loginMessage"></div>
+    </div>
+  </div>
+
+  <div class="card" id="mainCard" style="display:none;">
+    <div class="inset">
+      <h2 class="glitch" data-text="X-CYBER CRASHER">X-CYBER CRASHER</h2>
+      <div class="form-group">
+        <input type="text" id="newToken" placeholder="Enter Bot Token" />
+        <button onclick="addToken()">Add</button>
+      </div>
+      <div id="addMessage"></div>
+    </div>
+
+    <div class="divider inset"></div>
+
+    <div class="inset">
+      <h2>Saved Tokens</h2>
+      <div class="token-list" id="tokenList">Loading...</div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    let particlesArray;
+
+    function sizeCanvas(){
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    sizeCanvas();
+    window.addEventListener("resize", ()=>{ sizeCanvas(); init(); });
+
+    class Particle {
+      constructor(x,y,size,sx,sy){ this.x=x; this.y=y; this.size=size; this.sx=sx; this.sy=sy; }
+      update(){ this.x+=this.sx; this.y+=this.sy; if(this.x<0||this.x>canvas.width) this.sx*=-1; if(this.y<0||this.y>canvas.height) this.sy*=-1; }
+      draw(){
+        ctx.fillStyle="rgba(0,255,255,0.7)";
+        ctx.shadowColor="cyan"; ctx.shadowBlur=10;
+        ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.closePath(); ctx.fill();
+      }
+    }
+
+    function init(){
+      particlesArray=[];
+      const count = Math.min(120, Math.floor((canvas.width*canvas.height)/30000));
+      for(let i=0;i<count;i++){
+        const size = Math.random()*2.5 + 1;
+        const x = Math.random()*canvas.width;
+        const y = Math.random()*canvas.height;
+        const sx = (Math.random()-0.5)*0.8;
+        const sy = (Math.random()-0.5)*0.8;
+        particlesArray.push(new Particle(x,y,size,sx,sy));
+      }
+    }
+
+    function animate(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      particlesArray.forEach(p=>{ p.update(); p.draw(); });
+      requestAnimationFrame(animate);
+    }
+    init(); animate();
+
+    const settings = {
+      username: "NvidiaFR3",
+      repo: "Database-Token-Reseller-Gaming",
+      token: "",
+      filePath: "database.json"
+    };
+    const passwordDefault = "dbcyber1331";
+
+    function login(){
+      const pass = document.getElementById("password").value;
+      if(pass === passwordDefault){
+        document.getElementById("loginCard").style.display="none";
+        document.getElementById("mainCard").style.display="block";
+        loadTokens();
+      }else{
+        document.getElementById("loginMessage").innerHTML = "<div class='error'>Wrong password!</div>";
+      }
+    }
+
+    async function loadTokens(){
+      try{
+        const res = await fetch(`https://raw.githubusercontent.com/${settings.username}/${settings.repo}/main/${settings.filePath}`);
+        if(!res.ok) throw new Error("Fetch fail");
+        const tokens = await res.json();
+        renderTokens(tokens);
+      }catch(e){
+        document.getElementById("tokenList").innerHTML = "<div class='error'>No tokens found</div>";
+      }
+    }
+
+    function renderTokens(tokens){
+      const list = document.getElementById("tokenList");
+      if(!Array.isArray(tokens) || tokens.length===0){ list.innerHTML="<div>No tokens saved</div>"; return; }
+      list.innerHTML="";
+      tokens.forEach(t=>{
+        const div=document.createElement("div");
+        div.className="token-item";
+        div.textContent=t;
+        list.appendChild(div);
+      });
+    }
+
+    async function addToken(){
+  const tokenInput = document.getElementById("newToken");
+  const newToken = tokenInput.value.trim();
+  if(!newToken) return;
+
+  let currentTokens=[];
+  try{
+    const res = await fetch(`https://raw.githubusercontent.com/${settings.username}/${settings.repo}/main/${settings.filePath}?t=${Date.now()}`);
+    if(res.ok) currentTokens = await res.json();
+  }catch{}
+
+  if(currentTokens.includes(newToken)){
+    document.getElementById("addMessage").innerHTML = "<div class='error'>Token Sudah Ada Di Database!</div>";
+    return;
+  }
+
+  currentTokens.push(newToken);
+
+  const content = btoa(JSON.stringify(currentTokens, null, 2));
+  const getSha = await fetch(`https://api.github.com/repos/${settings.username}/${settings.repo}/contents/${settings.filePath}`,{
+    headers:{ Authorization:`token ${settings.token}` }
+  });
+  let shaData=null;
+  if(getSha.ok){ const data = await getSha.json(); shaData=data.sha; }
+
+  const updateRes = await fetch(`https://api.github.com/repos/${settings.username}/${settings.repo}/contents/${settings.filePath}`,{
+    method:"PUT",
+    headers:{ Authorization:`token ${settings.token}`, "Content-Type":"application/json" },
+    body:JSON.stringify({ message:"Add new token", content, sha:shaData })
+  });
+
+  if(updateRes.ok){
+    document.getElementById("addMessage").innerHTML = "<div class='success'>Token added!</div>";
+    tokenInput.value="";
+    renderTokens(currentTokens);
+  }else{
+    document.getElementById("addMessage").innerHTML = "<div class='error'>Failed to add token</div>";
+  }
+}
+  </script>
+</body>
+      </html>
